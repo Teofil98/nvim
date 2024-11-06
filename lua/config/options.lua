@@ -18,7 +18,6 @@ require('mason-lspconfig').setup({
   },
 })
 
-
 -- Reserve a space in the gutter
 -- This will avoid an annoying layout shift in the screen
 vim.opt.signcolumn = 'yes'
@@ -30,6 +29,33 @@ lspconfig_defaults.capabilities = vim.tbl_deep_extend(
   lspconfig_defaults.capabilities,
   require('cmp_nvim_lsp').default_capabilities()
 )
+
+require('lspconfig').clangd.setup {
+  -- Server-specific settings. See `:help lspconfig-setup`
+  cmd = {
+	  'clangd',
+	  '--header-insertion=never'
+  },
+}
+
+require("conform").setup({
+  formatters_by_ft = {
+	cpp={"clang-format"}
+  },
+})
+
+vim.api.nvim_create_user_command("Format", function(args)
+  local range = nil
+  if args.count ~= -1 then
+    local end_line = vim.api.nvim_buf_get_lines(0, args.line2 - 1, args.line2, true)[1]
+    range = {
+      start = { args.line1, 0 },
+      ["end"] = { args.line2, end_line:len() },
+    }
+  end
+  require("conform").format({ async = true, lsp_format = "fallback", range = range })
+end, { range = true })
+
 -- This is where you enable features that only work
 -- if there is a language server active in the file
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -47,6 +73,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
     vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
     vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
     vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+	vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, opts)
+	vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end, opts)
+	vim.keymap.set('v', '<leader>fc', ':Format<CR>')
   end,
 })
 
