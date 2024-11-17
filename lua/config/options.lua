@@ -6,6 +6,7 @@ vim.opt.tabstop = 4
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.cursorline = true
+vim.opt.expandtab = true
 require('mason').setup({})
 require('mason-lspconfig').setup({
   -- Replace the language servers listed here 
@@ -33,14 +34,14 @@ lspconfig_defaults.capabilities = vim.tbl_deep_extend(
 require('lspconfig').clangd.setup {
   -- Server-specific settings. See `:help lspconfig-setup`
   cmd = {
-	  'clangd',
-	  '--header-insertion=never'
+    'clangd',
+    '--header-insertion=never'
   },
 }
 
 require("conform").setup({
   formatters_by_ft = {
-	cpp={"clang-format"}
+    cpp={"clang-format"}
   },
 })
 
@@ -55,6 +56,25 @@ vim.api.nvim_create_user_command("Format", function(args)
   end
   require("conform").format({ async = true, lsp_format = "fallback", range = range })
 end, { range = true })
+
+require('whitespace-nvim').setup({
+            -- configuration options and their defaults
+
+            -- `highlight` configures which highlight is used to display
+            -- trailing whitespace
+            highlight = 'DiffDelete',
+
+            -- `ignored_filetypes` configures which filetypes to ignore when
+            -- displaying trailing whitespace
+            ignored_filetypes = { 'TelescopePrompt', 'Trouble', 'help', 'dashboard' },
+
+            -- `ignore_terminal` configures whether to ignore terminal buffers
+            ignore_terminal = true,
+
+            -- `return_cursor` configures if cursor should return to previous
+            -- position after trimming whitespace
+            return_cursor = true,
+        })
 
 -- This is where you enable features that only work
 -- if there is a language server active in the file
@@ -73,9 +93,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
     vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
     vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
     vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
-	vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, opts)
-	vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end, opts)
-	vim.keymap.set('v', '<leader>fc', ':Format<CR>')
+    vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, opts)
+    vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end, opts)
+    vim.keymap.set('v', '<leader>fc', ':Format<CR>')
   end,
 })
 

@@ -14,3 +14,10 @@ vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help ta
 
 vim.keymap.set('n', '<C-h>', ':tabprev<CR>')
 vim.keymap.set('n', '<C-l>', ':tabnext<CR>')
+
+vim.keymap.set('n', '<leader>rl', '<C-w>>')
+vim.keymap.set('n', '<leader>rh', '<C-w><')
+vim.keymap.set('n', '<leader>rj', '<C-w>-')
+vim.keymap.set('n', '<leader>rk', '<C-w>+')
+
+vim.keymap.set('n', '<Leader>rw', require('whitespace-nvim').trim)
